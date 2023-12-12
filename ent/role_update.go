@@ -6,7 +6,6 @@ import (
 	"context"
 	"ent_test/ent/predicate"
 	"ent_test/ent/role"
-	"ent_test/ent/user"
 	"errors"
 	"fmt"
 
@@ -28,34 +27,9 @@ func (ru *RoleUpdate) Where(ps ...predicate.Role) *RoleUpdate {
 	return ru
 }
 
-// SetUserID sets the "user" edge to the User entity by ID.
-func (ru *RoleUpdate) SetUserID(id int) *RoleUpdate {
-	ru.mutation.SetUserID(id)
-	return ru
-}
-
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (ru *RoleUpdate) SetNillableUserID(id *int) *RoleUpdate {
-	if id != nil {
-		ru = ru.SetUserID(*id)
-	}
-	return ru
-}
-
-// SetUser sets the "user" edge to the User entity.
-func (ru *RoleUpdate) SetUser(u *User) *RoleUpdate {
-	return ru.SetUserID(u.ID)
-}
-
 // Mutation returns the RoleMutation object of the builder.
 func (ru *RoleUpdate) Mutation() *RoleMutation {
 	return ru.mutation
-}
-
-// ClearUser clears the "user" edge to the User entity.
-func (ru *RoleUpdate) ClearUser() *RoleUpdate {
-	ru.mutation.ClearUser()
-	return ru
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -94,35 +68,6 @@ func (ru *RoleUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if ru.mutation.UserCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: true,
-			Table:   role.UserTable,
-			Columns: []string{role.UserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := ru.mutation.UserIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: true,
-			Table:   role.UserTable,
-			Columns: []string{role.UserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
 	if n, err = sqlgraph.UpdateNodes(ctx, ru.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{role.Label}
@@ -143,34 +88,9 @@ type RoleUpdateOne struct {
 	mutation *RoleMutation
 }
 
-// SetUserID sets the "user" edge to the User entity by ID.
-func (ruo *RoleUpdateOne) SetUserID(id int) *RoleUpdateOne {
-	ruo.mutation.SetUserID(id)
-	return ruo
-}
-
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (ruo *RoleUpdateOne) SetNillableUserID(id *int) *RoleUpdateOne {
-	if id != nil {
-		ruo = ruo.SetUserID(*id)
-	}
-	return ruo
-}
-
-// SetUser sets the "user" edge to the User entity.
-func (ruo *RoleUpdateOne) SetUser(u *User) *RoleUpdateOne {
-	return ruo.SetUserID(u.ID)
-}
-
 // Mutation returns the RoleMutation object of the builder.
 func (ruo *RoleUpdateOne) Mutation() *RoleMutation {
 	return ruo.mutation
-}
-
-// ClearUser clears the "user" edge to the User entity.
-func (ruo *RoleUpdateOne) ClearUser() *RoleUpdateOne {
-	ruo.mutation.ClearUser()
-	return ruo
 }
 
 // Where appends a list predicates to the RoleUpdate builder.
@@ -238,35 +158,6 @@ func (ruo *RoleUpdateOne) sqlSave(ctx context.Context) (_node *Role, err error) 
 				ps[i](selector)
 			}
 		}
-	}
-	if ruo.mutation.UserCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: true,
-			Table:   role.UserTable,
-			Columns: []string{role.UserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := ruo.mutation.UserIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: true,
-			Table:   role.UserTable,
-			Columns: []string{role.UserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &Role{config: ruo.config}
 	_spec.Assign = _node.assignValues

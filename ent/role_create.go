@@ -5,7 +5,6 @@ package ent
 import (
 	"context"
 	"ent_test/ent/role"
-	"ent_test/ent/user"
 	"fmt"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -17,25 +16,6 @@ type RoleCreate struct {
 	config
 	mutation *RoleMutation
 	hooks    []Hook
-}
-
-// SetUserID sets the "user" edge to the User entity by ID.
-func (rc *RoleCreate) SetUserID(id int) *RoleCreate {
-	rc.mutation.SetUserID(id)
-	return rc
-}
-
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (rc *RoleCreate) SetNillableUserID(id *int) *RoleCreate {
-	if id != nil {
-		rc = rc.SetUserID(*id)
-	}
-	return rc
-}
-
-// SetUser sets the "user" edge to the User entity.
-func (rc *RoleCreate) SetUser(u *User) *RoleCreate {
-	return rc.SetUserID(u.ID)
 }
 
 // Mutation returns the RoleMutation object of the builder.
@@ -98,23 +78,6 @@ func (rc *RoleCreate) createSpec() (*Role, *sqlgraph.CreateSpec) {
 		_node = &Role{config: rc.config}
 		_spec = sqlgraph.NewCreateSpec(role.Table, sqlgraph.NewFieldSpec(role.FieldID, field.TypeInt))
 	)
-	if nodes := rc.mutation.UserIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: true,
-			Table:   role.UserTable,
-			Columns: []string{role.UserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_node.user_role = &nodes[0]
-		_spec.Edges = append(_spec.Edges, edge)
-	}
 	return _node, _spec
 }
 

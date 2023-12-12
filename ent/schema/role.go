@@ -2,7 +2,6 @@ package schema
 
 import (
 	"entgo.io/ent"
-	"entgo.io/ent/schema/edge"
 )
 
 // Role holds the schema definition for the Role entity.
@@ -17,9 +16,10 @@ func (Role) Fields() []ent.Field {
 
 // Edges of the Role.
 func (Role) Edges() []ent.Edge {
-	return []ent.Edge{
-		edge.From("user", User.Type).
-			Unique().
-			Ref("role"),
-	}
+	return nil
+	// return []ent.Edge{
+	// 	edge.From("user", User.Type).
+	// 		Unique().
+	// 		Ref("role"),
+	// }
 }
